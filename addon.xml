@@ -6,7 +6,9 @@
 	<requires>
 		<import addon="xbmc.python" version="2.1.0"/>
 		<import addon="script.module.simplejson" version="2.0.10"/>
+		<import addon="script.module.stream.resolver" version="1.6.13" />
                 <import addon="script.module.beautifulsoup4" version="1.6.13" />
+                <import addon="script.module.dmd-czech.common" version="1.5.5"/>
                 <import addon="script.module.demjson" version="2.2.3" />
 	</requires>
 	<extension point="xbmc.python.weather" library="default.py"/>
