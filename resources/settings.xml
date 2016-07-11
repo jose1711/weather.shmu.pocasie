@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<settings>
+	<category label="Nastavenia">
+		<setting id="mesto" label="Mesto" type="action" action="RunScript($ID,mesto)" enable="true" default=""/>
+		<setting id="mestometeogram" label="Mesto (meteogram)" type="action" action="RunScript($ID,mesto)" enable="true" default=""/>
+		<setting id="key" label="OpenWeather API kľúč" type="text" default=""/>
+		</category>
+</settings>

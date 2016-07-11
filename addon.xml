@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<addon 	id="weather.shmu.pocasie"
+		name="SHMU.sk počasie"
+		version="0.0.1"
+		provider-name="Jose Riha">
+	<requires>
+		<import addon="xbmc.python" version="2.1.0"/>
+		<import addon="script.module.simplejson" version="2.0.10"/>
+                <import addon="script.module.beautifulsoup4" version="1.6.13" />
+                <import addon="script.module.demjson" version="2.2.3" />
+	</requires>
+	<extension point="xbmc.python.weather" library="default.py"/>
+	<extension point="xbmc.addon.metadata">
+		<summary>Weather forecast for Slovak Republic from www.shmu.sk</summary>
+		<description>Actual weather information for major cities in Slovakia (current conditions are pulled from openweather)</description>
+		<summary lang="cs">Předpověď počasí ze serveru www.shmu.sk</summary>
+		<description lang="cs">Informace o počasí pro města na Slovensku (aktuální data pocházejí z openweather)</description>
+		<summary lang="sk">Predpoveď počasia zo serveru www.shmu.sk</summary>
+		<description lang="sk">Informácie o počasí pre Slovensko (aktuálne údaje pochádzajú z openweather)</description>
+		<language></language>
+		<platform>all</platform>
+		<source>https://github.com/jose1711/weather.shmu.pocasie.git</source>
+	</extension>
+</addon>
