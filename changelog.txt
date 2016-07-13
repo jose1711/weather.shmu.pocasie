@@ -1,0 +1,6 @@
+0.0.2
+- opraveny problem s kodi na androide
+- pridany changelog
+
+0.0.1
+- uvodna verzia

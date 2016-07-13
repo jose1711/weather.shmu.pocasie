@@ -145,7 +145,7 @@ def parse_data():
         out.paste(headerimage, (75,75))
         out.paste(currview, (75,75+45))
         out.save(imgfile)
-        out.close()
+        #out.close()
         imgfile.close()
         set_property('Map.%s.Area' % str(i+1), outfilename)
         set_property('Map.%s.Layer' % str(i+1), outfilename)
