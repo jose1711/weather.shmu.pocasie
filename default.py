@@ -125,9 +125,11 @@ def parse_data():
     set_property('Current.OutlookIcon'   , xbmc.translatePath(os.path.join(__cwd__, 'resources/lib/icons', '%s.png' % en2icon[jsonresponse['weather'][0]['main'].lower()])))
     meteogrampage = util.parse_html('http://www.shmu.sk/sk/?page=1&id=meteo_num_mgram')
     cityid=meteogrampage.select('select#nwp_mesto')[0].find(text=mestometeogram).parent['value']
+    day,month,year,hour,text=re.split('[. ]',meteogrampage.select('select[class=w150] option')[-1].text)
+    meteogramdate='%s%s%s-%s00' % (year, month, day, hour)
     query='http://www.shmu.sk/data/datanwp/v2/'+\
-          'meteogram/al-meteogram_%s-%s-0000-nwp-.png' \
-          % ( cityid, datetime.datetime.now().strftime('%Y%m%d') )
+          'meteogram/al-meteogram_%s-%s-nwp-.png' \
+          % ( cityid, meteogramdate)
     req = urllib2.Request(query)
     response = urllib2.urlopen(req, timeout=10)
     meteogramimage=Image.open(cStringIO.StringIO(response.read()))
