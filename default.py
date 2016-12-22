@@ -17,7 +17,7 @@
 
 from demjson import demjson
 from PIL import Image
-from stats import *
+from stats import STATS
 import bs4
 import cStringIO
 import datetime
@@ -52,7 +52,7 @@ WEATHER_WINDOW = xbmcgui.Window(12600)
 socket.setdefaulttimeout(10)
 
 # Vypisovanie nazvov dnov v Slovencine
-skdays = ['Nedeľa', 'Pondelok', 'Utorok', 'Streda', 'Štvrtok', 'Piatok', 'Sobota',
+skdays = ['Nedeľa','Pondelok', 'Utorok', 'Streda', 'Štvrtok', 'Piatok', 'Sobota',
           'Nedeľa', 'Pondelok', 'Utorok', 'Streda', 'Štvrtok', 'Piatok', 'Sobota', 'Nedeľa']
 den = datetime.datetime.now()
 den = int(den.strftime("%w"))
@@ -69,6 +69,7 @@ en2icon = {
     'clear': 'jasno',
     'clouds': 'oblacno',
     'thunderstorm': 'bourky',
+    'mist': 'mlha'
 }
 
 WEATHER_CODES = {
@@ -280,7 +281,6 @@ def settings():
 
     meteogrampage = util.parse_html('http://www.shmu.sk/sk/?page=1&id=meteo_num_mgram')
     mestalist2 = meteogrampage.select('select#nwp_mesto')[0].get_text(separator='|').split('|')
-    dialog2 = xbmcgui.Dialog()
     mestometeogram = dialog.select('Vyberte mesto (meteogram)', mestalist2)
 
     # Uloz nastavenia
@@ -288,6 +288,7 @@ def settings():
     __addon__.setSetting('mestometeogram', mestalist2[mestometeogram])
 
 # Hlavny program
+
 
 # Zobraz nastavenia
 if sys.argv[1].startswith('mesto'):
