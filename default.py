@@ -18,6 +18,7 @@
 from demjson import demjson
 from PIL import Image
 from stats import STATS
+from collections import defaultdict
 import bs4
 import cStringIO
 import datetime
@@ -52,7 +53,7 @@ WEATHER_WINDOW = xbmcgui.Window(12600)
 socket.setdefaulttimeout(10)
 
 # Vypisovanie nazvov dnov v Slovencine
-skdays = ['Nedeľa','Pondelok', 'Utorok', 'Streda', 'Štvrtok', 'Piatok', 'Sobota',
+skdays = ['Nedeľa', 'Pondelok', 'Utorok', 'Streda', 'Štvrtok', 'Piatok', 'Sobota',
           'Nedeľa', 'Pondelok', 'Utorok', 'Streda', 'Štvrtok', 'Piatok', 'Sobota', 'Nedeľa']
 den = datetime.datetime.now()
 den = int(den.strftime("%w"))
@@ -64,13 +65,16 @@ log('den: %s' % den)
 def set_property(name, value):
     WEATHER_WINDOW.setProperty(name, value)
 
-en2icon = {
+
+en2icon = defaultdict(str)
+en2icon.update({
     'rain': 'dest',
     'clear': 'jasno',
     'clouds': 'oblacno',
     'thunderstorm': 'bourky',
-    'mist': 'mlha'
-}
+    'mist': 'mlha',
+    'fog': 'mlha'
+})
 
 WEATHER_CODES = {
     '1': '32',
@@ -139,8 +143,11 @@ def parse_data():
                                               int(jsonresponse['main']['humidity'])))
     set_property('Current.Pressure', str(jsonresponse['main']['pressure']))
     set_property('Current.Condition', str(jsonresponse['weather'][0]['main']))
+    iconfilename = en2icon[jsonresponse['weather'][0]['main'].lower()]
+    if not iconfilename:
+        iconfilename = 'none'
     set_property('Current.OutlookIcon', xbmc.translatePath(os.path.join(
-        __cwd__, 'resources/lib/icons', '%s.png' % en2icon[jsonresponse['weather'][0]['main'].lower()])))
+        __cwd__, 'resources/lib/icons', '%s.png' % iconfilename)))
     meteogrampage = util.parse_html('http://www.shmu.sk/sk/?page=1&id=meteo_num_mgram')
     cityid = meteogrampage.select('select#nwp_mesto')[0].find(text=mestometeogram).parent['value']
     day, month, year, hour, text = re.split(

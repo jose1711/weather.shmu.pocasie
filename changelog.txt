@@ -1,3 +1,6 @@
+0.0.4
+- chybajuca ikona nesposobi pad pluginu
+
 0.0.3
 - opravene zobrazovanie ikony hmly
 
