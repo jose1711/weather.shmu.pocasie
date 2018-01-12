@@ -1,3 +1,7 @@
+0.0.5
+- odstraneny problem s neaktualizovanim meteogramu
+- opravene zobrazovanie predpovede pre dalsie dni
+
 0.0.4
 - chybajuca ikona nesposobi pad pluginu
 

@@ -110,12 +110,15 @@ def parse_data():
     url = 'http://www.shmu.sk/sk/?#tab'
     page = util.post(url, data)
     soup = bs4.BeautifulSoup(page, "html5lib")
-    cnt = 0
+    print('mesto: %s, den: %s' % (mesto, den))
+    WEATHER_WINDOW.clearProperties()
+    cnt = 1
     for x in soup.select('.w600')[0].tbody.findAll('td', 'center'):
         if x.has_attr('style'):
             if 'white-space' in x['style']:
-                set_property('Daily.%s.LongDay' % cnt, skdays[den + cnt])
-                set_property('Daily.%s.ShortDay' % cnt, skdays[den + cnt])
+                print('Daily.%s.LongDay' % cnt, skdays[den + cnt - 1])
+                set_property('Daily.%s.LongDay' % cnt, skdays[den + cnt - 1])
+                set_property('Daily.%s.ShortDay' % cnt, skdays[den + cnt - 1])
                 night, day = x.get_text(separator='|').split('|')
                 set_property('Daily.%s.HighTemperature' % cnt, day)
                 set_property('Daily.%s.LowTemperature' % cnt, night)
@@ -165,15 +168,15 @@ def parse_data():
     aladin_text = ['Teplota, oblačnosť, zrážky', 'Tlak, rýchlosť a smer vetra']
 
     set_property('Map.IsFetched', '')
+    print('Stahujem meteogram..')
     for i in range(0, 2):
-        outfilename = os.path.join(PROFILE, 'aladin%s.png' % (i + 1))
+        outfilename = os.path.join(PROFILE, '%s_aladin%s.png' % (meteogramdate, i + 1))
         imgfile = open(outfilename, 'wb')
         out = Image.new("RGBA", (756, 756), None)
         currview = meteogramimage.crop(box=(0, 45 + 430 * i, 600, 430 * (i + 1) + 45))
         out.paste(headerimage, (75, 75))
         out.paste(currview, (75, 75 + 45))
         out.save(imgfile)
-        # out.close()
         imgfile.close()
         set_property('Map.%s.Area' % str(i + 1), outfilename)
         set_property('Map.%s.Layer' % str(i + 1), outfilename)
