@@ -96,6 +96,13 @@ WEATHER_CODES = {
 # Nacita udaje o pocasi zo servera
 
 
+def degToCompass(num):
+    """https://stackoverflow.com/questions/7490660/converting-wind-direction-in-angles-to-text-words"""
+    val = int((num / 22.5) + .5)
+    arr = ["N", "NNE", "NE", "ENE", "E", "ESE",  "SE",  "SSE", "S", "SSW", "SW", "WSW", "W", "WNW", "NW", "NNW"]
+    return arr[(val % 16)]
+
+
 def parse_data():
     # Stiahnutie udajov
     mesto = __addon__.getSetting('mesto')
@@ -138,7 +145,9 @@ def parse_data():
     jsonresponse = demjson.decode(response)['list'][0]
 
     set_property('Current.Temperature', str(jsonresponse['main']['temp']))
-    set_property('Current.Wind', str(jsonresponse['wind']['speed']))
+    set_property('Current.Wind', str(jsonresponse['wind']['speed'] * 3.6))
+    set_property('Current.WindDirection',
+                 degToCompass(jsonresponse['wind']['deg']))
     set_property('Current.FeelsLike', feelslike(round(float(jsonresponse['main']['temp'])),
                                                 int(round(float(jsonresponse['wind']['speed']) * 3.6) + 0.5)))
     set_property('Current.Humidity', str(jsonresponse['main']['humidity']))
@@ -188,7 +197,7 @@ def clear():  # Vynulovanie hodnot pred stiahnutim novych
     set_property('Current.Condition', 'N/A')
     set_property('Current.Temperature', '0')
     set_property('Current.Wind', '0')
-    #set_property('Current.WindDirection' , 'N/A')
+    set_property('Current.WindDirection' , 'N/A')
     set_property('Current.Humidity', '0')
     set_property('Current.OutlookIcon', 'na.png')
     set_property('Current.FanartCode', 'na')
