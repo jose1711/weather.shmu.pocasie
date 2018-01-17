@@ -146,8 +146,11 @@ def parse_data():
 
     set_property('Current.Temperature', str(jsonresponse['main']['temp']))
     set_property('Current.Wind', str(jsonresponse['wind']['speed'] * 3.6))
-    set_property('Current.WindDirection',
-                 degToCompass(jsonresponse['wind']['deg']))
+    try:
+        set_property('Current.WindDirection',
+                     degToCompass(jsonresponse['wind']['deg']))
+    except:
+        pass
     set_property('Current.FeelsLike', feelslike(round(float(jsonresponse['main']['temp'])),
                                                 int(round(float(jsonresponse['wind']['speed']) * 3.6) + 0.5)))
     set_property('Current.Humidity', str(jsonresponse['main']['humidity']))
