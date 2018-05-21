@@ -19,6 +19,7 @@ from demjson import demjson
 from PIL import Image
 from stats import STATS
 from collections import defaultdict
+from itertools import islice
 import bs4
 import cStringIO
 import datetime
@@ -41,6 +42,8 @@ __addonid__ = __addon__.getAddonInfo('id')
 __cwd__ = __addon__.getAddonInfo('path').decode("utf-8")
 __language__ = __addon__.getLocalizedString
 PROFILE = xbmc.translatePath(__addon__.getAddonInfo('profile')).decode('utf-8')
+header_height = 39
+band_height = 143
 
 
 def log(msg):
@@ -108,6 +111,10 @@ def parse_data():
     mesto = __addon__.getSetting('mesto')
     mestometeogram = __addon__.getSetting('mestometeogram')
     key = __addon__.getSetting('key')
+    try:
+        pages = int(__addon__.getSetting('pages'))
+    except ValueError:
+        pages = 6
 
     if not key:
         xbmcgui.Dialog().ok('Chyba', 'Zadajte v nastaveniach kľúč k OpenWeather API!')
@@ -118,7 +125,6 @@ def parse_data():
     page = util.post(url, data)
     soup = bs4.BeautifulSoup(page, "html5lib")
     print('mesto: %s, den: %s' % (mesto, den))
-    WEATHER_WINDOW.clearProperties()
     cnt = 1
     for x in soup.select('.w600')[0].tbody.findAll('td', 'center'):
         if x.has_attr('style'):
@@ -174,25 +180,50 @@ def parse_data():
     req = urllib2.Request(query)
     response = urllib2.urlopen(req, timeout=10)
     meteogramimage = Image.open(cStringIO.StringIO(response.read()))
-    headerimage = meteogramimage.crop(box=(0, 0, 600, 45))
     response.close()
-
-    aladin_text = ['Teplota, oblačnosť, zrážky', 'Tlak, rýchlosť a smer vetra']
 
     set_property('Map.IsFetched', '')
     print('Stahujem meteogram..')
-    for i in range(0, 2):
+    cut_picture(pages=pages, meteogramimage=meteogramimage,
+                meteogramdate=meteogramdate)
+
+
+def chunk(it, size):
+    it = iter(it)
+    return iter(lambda: tuple(islice(it, size)), ())
+
+
+def cut_picture(meteogramimage, meteogramdate, pages):
+    if pages == 6:
+        x_crop = 400
+    else:
+        x_crop = 600
+
+    headerimage = meteogramimage.crop(box=(0, 0, 600, header_height))
+    bands = []
+    bands_labels = ['Teplota', 'Oblačnosť', 'Zrážky', 'Tlak',
+                    'Rýchlosť vetra', 'Smer vetra']
+    for i, label in enumerate(bands_labels):
+        band = meteogramimage.crop(box=(0, header_height + band_height * i,
+                                        x_crop, band_height * (i + 1) + header_height))
+        bands.append([label, band])
+
+    for i, bandgroup in enumerate(chunk(bands, 6 / pages)):
         outfilename = os.path.join(PROFILE, '%s_aladin%s.png' % (meteogramdate, i + 1))
         imgfile = open(outfilename, 'wb')
-        out = Image.new("RGBA", (756, 756), None)
-        currview = meteogramimage.crop(box=(0, 45 + 430 * i, 600, 430 * (i + 1) + 45))
-        out.paste(headerimage, (75, 75))
-        out.paste(currview, (75, 75 + 45))
+        out = Image.new("RGBA", (x_crop, band_height * len(bandgroup) + header_height), None)
+        out.paste(headerimage, (0, 0))
+        cursor = header_height
+        for label, band in bandgroup:
+            print(label, band)
+            out.paste(band, (0, cursor))
+            cursor += band_height
         out.save(imgfile)
         imgfile.close()
         set_property('Map.%s.Area' % str(i + 1), outfilename)
         set_property('Map.%s.Layer' % str(i + 1), outfilename)
-        set_property('Map.%s.Heading' % str(i + 1), aladin_text[i])
+        set_property('Map.%s.Heading' % str(i + 1),
+                     ', '.join([x[0] for x in bandgroup]))
     set_property('Map.IsFetched', 'true')
 
 

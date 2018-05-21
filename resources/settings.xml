@@ -4,5 +4,7 @@
 		<setting id="mesto" label="Mesto" type="action" action="RunScript($ID,mesto)" enable="true" default=""/>
 		<setting id="mestometeogram" label="Mesto (meteogram)" type="action" action="RunScript($ID,mesto)" enable="true" default=""/>
 		<setting id="key" label="OpenWeather API kľúč" type="text" default=""/>
+		<setting label="Zmena vyžaduje reštart Kodi" type="lsep" />
+		<setting id="pages" label="Počet stránok s grafmi" type="labelenum" values="2|6" default="6"/>
 		</category>
 </settings>
